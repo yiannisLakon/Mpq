@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net11.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Mpq</RootNamespace>
+        <!-- Consumers publish Native AOT; this keeps the trim/AOT analysers on and the library honest. -->
+        <IsAotCompatible>true</IsAotCompatible>
+        <BaseOutputPath>.\.bin</BaseOutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="Vendor\Adpcm\LICENSE.bizadm.txt" />
+      <None Include="Vendor\Adpcm\LICENSE.StormLib.txt" />
+      <None Include="Vendor\Adpcm\README.md" />
+      <None Include="Vendor\BZip2\LICENSE.SharpZipLib.txt" />
+      <None Include="Vendor\BZip2\README.md" />
+      <None Include="Vendor\Huffman\LICENSE.bizadm.txt" />
+      <None Include="Vendor\Huffman\LICENSE.StormLib.txt" />
+      <None Include="Vendor\Huffman\README.md" />
+      <None Include="Vendor\Pkware\LICENSE.mpqfs.txt" />
+      <None Include="Vendor\Pkware\README.md" />
+    </ItemGroup>
+
+</Project>

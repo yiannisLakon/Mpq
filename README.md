@@ -189,8 +189,10 @@ array was allocated from it).
 
 > 🔑 **`War2Dat.mpq`, and why 89 is not 1,186.** An MPQ entry's decryption key is derived from
 > its **filename**, so an entry no `(listfile)` names cannot be read at all — the block is there,
-> the bytes are there, the key is not. That archive names 88 of its 1,186 blocks, and 89 is those
-> 88 plus `(attributes)`.
+> the bytes are there, the key is not. That archive's `(listfile)` names 88 of its 1,186 blocks;
+> the reader also resolves an archive's own metadata entries by their known names, and here that
+> adds exactly one — `(listfile)` itself, the only one of them this archive carries. Hence **89**,
+> and hence 89 + the 1,097 nameless blocks = 1,186.
 >
 > **The codecs are not what is missing.** A harness that recovers keys by trial against the
 > sector-offset table reached all 1,186 and decoded **13,147 of 13,147** sectors to their exact

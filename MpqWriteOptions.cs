@@ -67,10 +67,10 @@ internal static class MpqNames {
 	/// and what <see cref="MpqExtractor"/> decodes back.
 	/// </summary>
 	public static string Encode(string name) {
-		MpqCompat.ThrowIfNullOrEmpty(name);
+		ArgumentException.ThrowIfNullOrEmpty(name);
 		string folded = name.Replace('/', '\\').TrimStart('\\');
 		if (folded.Length == 0) throw new MpqException($"'{name}' is not a usable archive name.");
-		return MpqCompat.IsAscii(folded) ? folded : Encoding.Latin1.GetString(Encoding.UTF8.GetBytes(folded));
+		return Ascii.IsValid(folded) ? folded : Encoding.Latin1.GetString(Encoding.UTF8.GetBytes(folded));
 	}
 
 	/// <summary>

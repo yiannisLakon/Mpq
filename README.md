@@ -17,11 +17,11 @@ writes new ones — in process, in managed code.
   against a unit-test suite. There is **no test project** — see
   [What this is not](#-what-this-is-not).
 
-> ✅ **Targets `net11.0`, `net8.0` and `net6.0`**, from one set of sources and with zero
-> packages on every one of them. .NET Framework (net48 and earlier) is still out: reaching it
-> needs `netstandard2.0`, which needs the `System.Memory` package for `Span<T>` and
-> `ArrayPool<T>` — and that would end the zero-dependency claim above. See
-> [Roadmap](#-roadmap).
+> ✅ **Targets `net11.0` only**, and is written against the newest BCL rather than a lowest
+> common denominator. Consumers must be on .NET 11: net8.0, net6.0, `netstandard2.0` and net48
+> cannot reference this library by any mechanism. A lower floor costs either a compatibility
+> shim or, for the oldest of them, the `System.Memory` package for `Span<T>` and `ArrayPool<T>`
+> — which would end the zero-dependency claim above. See [Roadmap](#-roadmap).
 
 ---
 
@@ -247,9 +247,9 @@ Stated plainly rather than buried:
 - ❌ **No test project.** None. The validation above is reproducible *runs*, not a suite you can
   invoke with `dotnet test`. A regression would be caught by re-running them against a game
   install — which means it would not be caught in CI, because there is no CI either.
-- ❌ **No .NET Framework.** `net11.0`, `net8.0` and `net6.0` are covered (so .NET 7 and 9/10
-  consumers resolve the net6.0 and net8.0 assets); net48 and earlier are not, and would cost a
-  `PackageReference` to reach.
+- ❌ **Nothing below .NET 11.** `net11.0` is the only target, so net8.0, net6.0,
+  `netstandard2.0` and net48 consumers cannot reference the library at all — not as a package,
+  not as a submodule, not as a DLL.
 - ❌ **Not on NuGet.** Reference the project or vendor the folder.
 - ❌ **No v3/v4 writing**, no LZMA, no sparse compression, no patch-file (`PATCH`) application,
   no per-file encryption on write, no `(attributes)`.
@@ -276,7 +276,7 @@ Nothing here is promised, and none of it is started.
 | | Item | Why it matters |
 |---|---|---|
 | 1 | **Filename / key recovery for unnamed blocks** | the largest gap by far: an entry no `(listfile)` names has no key, so it is unreadable however well the codecs work. In `War2Dat.mpq` that is **1,097 of 1,186 entries** — the whole of Warcraft II's data beyond the 88 it names |
-| 2 | **`netstandard2.0` / `net48`** | all that is left of the multi-targeting gap; it costs a `System.Memory` `PackageReference`, which is why it has not been taken |
+| 2 | **Any target below `net11.0`** | nothing older can reference the library today; a lower floor costs a compatibility shim for the BCL helpers the code uses, and `netstandard2.0` / `net48` would additionally cost a `System.Memory` `PackageReference` |
 | 3 | **A test project** | turn the validation runs into something `dotnet test` can execute without a game install |
 | 4 | PKWARE **ASCII literal mode** coverage | the one decoder path nothing has run |
 | 5 | `0x0A` (PKWARE + zlib) and `0x20` (sparse) | the two remaining pre-CASC masks the reader refuses |

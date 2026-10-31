@@ -135,7 +135,7 @@ public sealed class MpqBuilder:IDisposable {
 		Span<byte> buf = stackalloc byte[32];
 		for (long probe = 0; probe + 32 <= fs.Length; probe += 0x200) {
 			fs.Position = probe;
-			fs.ReadFully(buf);
+			fs.ReadExactly(buf);
 			uint magic = BinaryPrimitives.ReadUInt32LittleEndian(buf);
 			long at = -1;
 
@@ -143,7 +143,7 @@ public sealed class MpqBuilder:IDisposable {
 				long real = probe + BinaryPrimitives.ReadUInt32LittleEndian(buf[8..]);
 				if (real + 32 > fs.Length) continue;
 				fs.Position = real;
-				fs.ReadFully(buf);
+				fs.ReadExactly(buf);
 				if (BinaryPrimitives.ReadUInt32LittleEndian(buf) == magicMpq) at = real;
 			} else if (magic == magicMpq) {
 				at = probe;
@@ -153,7 +153,7 @@ public sealed class MpqBuilder:IDisposable {
 			if (at == 0) return [];
 			var head = new byte[at];
 			fs.Position = 0;
-			fs.ReadFully(head);
+			fs.ReadExactly(head);
 			return head;
 		}
 		throw new MpqException($"No MPQ header found in '{archivePath}'.");
@@ -387,7 +387,7 @@ public sealed class MpqBuilder:IDisposable {
 		try {
 			for (int i = 0; i < count; i++) {
 				int want = (int)Math.Min(sectorSize, size - (long)i * sectorSize);
-				source.ReadFully(raw, 0, want);
+				source.ReadExactly(raw, 0, want);
 				int got = MpqCompressor.Compress(raw.AsSpan(0, want), packed.AsSpan(0, want));
 				if (got > 0) {
 					fs.Write(packed, 0, got);

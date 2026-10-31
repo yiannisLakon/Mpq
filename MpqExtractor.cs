@@ -90,7 +90,7 @@ public static class MpqExtractor {
 	/// fall back to the bytes as-is when they are not valid UTF-8.
 	/// </summary>
 	static string DiskName(string name) {
-		if (Ascii.IsValid(name)) return name;   // the overwhelmingly common case
+		if (MpqCompat.IsAscii(name)) return name;   // the overwhelmingly common case
 
 		byte[] raw = Encoding.Latin1.GetBytes(name);
 		try {

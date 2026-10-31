@@ -92,7 +92,7 @@ public sealed class MpqArchive:IDisposable {
 		Span<byte> buf = stackalloc byte[32];
 		for (long probe = 0; probe + 32 <= fs.Length; probe += 0x200) {
 			fs.Position = probe;
-			fs.ReadExactly(buf);
+			fs.ReadFully(buf);
 			uint magic = BinaryPrimitives.ReadUInt32LittleEndian(buf);
 
 			if (magic == magicUser) {
@@ -101,7 +101,7 @@ public sealed class MpqArchive:IDisposable {
 				long real = probe + headerOffset;
 				if (real + 32 > fs.Length) continue;
 				fs.Position = real;
-				fs.ReadExactly(buf);
+				fs.ReadFully(buf);
 				if (BinaryPrimitives.ReadUInt32LittleEndian(buf) != magicMpq) continue;
 				ParseHeader(buf, out version, out blockShift,
 					out hashPos, out blockPos, out hashCount, out blockCount);
@@ -141,7 +141,7 @@ public sealed class MpqArchive:IDisposable {
 
 	void ReadInto(long relative, Span<byte> destination) {
 		stream.Position = mpqPos + relative;
-		stream.ReadExactly(destination);
+		stream.ReadFully(destination);
 	}
 
 	public bool Contains(string name) => byName.ContainsKey(NameKey(name));
@@ -297,13 +297,13 @@ public sealed class MpqArchive:IDisposable {
 				// MPQ's 0x02 is zlib-wrapped (header + Adler-32), so ZLibStream, not DeflateStream.
 				using (var source = new MemoryStream(raw, 1, stored - 1, writable: false))
 				using (var zlib = new ZLibStream(source, CompressionMode.Decompress))
-					zlib.ReadAtLeast(destination, destination.Length, throwOnEndOfStream: false);
+					zlib.ReadUpTo(destination);
 				return;   // a short sector stays zero-filled, as StormLib leaves it
 			case 0x10:
 				// MPQ's 0x10 payload is an ordinary bzip2 stream, 'BZh' header and all.
 				using (var source = new MemoryStream(raw, 1, stored - 1, writable: false))
 				using (var bz = new Vendor.BZip2.BZip2InputStream(source) { IsStreamOwner = false })
-					bz.ReadAtLeast(destination, destination.Length, throwOnEndOfStream: false);
+					bz.ReadUpTo(destination);
 				return;
 			case 0x08:
 				MpqPkware.Explode(payload, destination);

@@ -17,8 +17,11 @@ writes new ones — in process, in managed code.
   against a unit-test suite. There is **no test project** — see
   [What this is not](#-what-this-is-not).
 
-> ⚠️ **`net11.0` only.** There is no multi-targeting yet, so projects on .NET 8 and earlier (or
-> .NET Framework) **cannot reference this**. See [Roadmap](#-roadmap).
+> ✅ **Targets `net11.0`, `net8.0` and `net6.0`**, from one set of sources and with zero
+> packages on every one of them. .NET Framework (net48 and earlier) is still out: reaching it
+> needs `netstandard2.0`, which needs the `System.Memory` package for `Span<T>` and
+> `ArrayPool<T>` — and that would end the zero-dependency claim above. See
+> [Roadmap](#-roadmap).
 
 ---
 
@@ -230,8 +233,9 @@ Stated plainly rather than buried:
 - ❌ **No test project.** None. The validation above is reproducible *runs*, not a suite you can
   invoke with `dotnet test`. A regression would be caught by re-running them against a game
   install — which means it would not be caught in CI, because there is no CI either.
-- ❌ **`net11.0` only.** No multi-targeting, so .NET 8 / 7 / 6 and .NET Framework consumers are
-  locked out today.
+- ❌ **No .NET Framework.** `net11.0`, `net8.0` and `net6.0` are covered (so .NET 7 and 9/10
+  consumers resolve the net6.0 and net8.0 assets); net48 and earlier are not, and would cost a
+  `PackageReference` to reach.
 - ❌ **Not on NuGet.** Reference the project or vendor the folder.
 - ❌ **No v3/v4 writing**, no LZMA, no sparse compression, no patch-file (`PATCH`) application,
   no per-file encryption on write, no `(attributes)`.
@@ -257,7 +261,7 @@ Nothing here is promised, and none of it is started.
 
 | | Item | Why it matters |
 |---|---|---|
-| 1 | **Multi-targeting** (`net8.0`, `netstandard2.0`, `net48`) | the single biggest limitation — it is what keeps older consumers out |
+| 1 | **`netstandard2.0` / `net48`** | all that is left of the multi-targeting gap; it costs a `System.Memory` `PackageReference`, which is why it has not been taken |
 | 2 | **A test project** | turn the validation runs into something `dotnet test` can execute without a game install |
 | 3 | PKWARE **ASCII literal mode** coverage | the one decoder path nothing has run |
 | 4 | `0x0A` (PKWARE + zlib) and `0x20` (sparse) | the two remaining pre-CASC masks the reader refuses |

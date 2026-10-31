@@ -1,13 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net11.0</TargetFramework>
+        <!-- net11.0, net8.0 and net6.0 all build from the same source: the five BCL helpers
+             that arrived after net6.0 live in MpqCompat.cs. Still zero PackageReferences on
+             every target, which is the point. -->
+        <TargetFrameworks>net11.0;net8.0;net6.0</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Mpq</RootNamespace>
         <!-- Consumers publish Native AOT; this keeps the trim/AOT analysers on and the library honest. -->
-        <IsAotCompatible>true</IsAotCompatible>
+        <!-- The property only exists from net8.0; the net6.0 asset is the same source. -->
+        <IsAotCompatible Condition="'$(TargetFramework)' != 'net6.0'">true</IsAotCompatible>
         <BaseOutputPath>.\.bin</BaseOutputPath>
     </PropertyGroup>
 

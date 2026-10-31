@@ -67,8 +67,8 @@ internal static class AdpcmCodec
     public static byte[] Compress(ReadOnlySpan<byte> input, int channels, int bitShift)
     {
         ValidateChannels(channels);
-        ArgumentOutOfRangeException.ThrowIfLessThan(bitShift, 4);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(bitShift, 6);
+        Mpq.MpqCompat.ThrowIfLessThan(bitShift, 4);
+        Mpq.MpqCompat.ThrowIfGreaterThan(bitShift, 6);
 
         int compressionLevel = bitShift;
         int headerBitShift = compressionLevel - 1;
